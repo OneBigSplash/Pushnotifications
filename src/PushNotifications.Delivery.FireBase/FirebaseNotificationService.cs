@@ -29,7 +29,7 @@ namespace PushNotifications.Delivery.FireBase
         {
             FirebaseMessaging client = GetMessagingClient(notification.Target.Application);
 
-            string badge = notification.NotificationPayload.Badge > 0 ? notification.NotificationPayload.Badge.ToString() : "1";
+            int badge = notification.NotificationPayload.Badge > 0 ? notification.NotificationPayload.Badge : 1;
 
             int skip = 0;
             int take = 450; // The limit from FireBase is 500
@@ -47,7 +47,15 @@ namespace PushNotifications.Delivery.FireBase
                         Notification = new Notification()
                         {
                             Title = notification.NotificationPayload.Title,
-                            Body = notification.NotificationPayload.Body
+                            Body = notification.NotificationPayload.Body,
+                        },
+                        Apns = new ApnsConfig()
+                        {
+                            Aps = new Aps()
+                            {
+                                Sound = notification.NotificationPayload.Sound,
+                                Badge = badge,
+                            }
                         }
                     };
 
@@ -94,6 +102,9 @@ namespace PushNotifications.Delivery.FireBase
 
         public async Task<bool> SendToTopicAsync(Topic topic, NotificationForDelivery notification)
         {
+
+            int badge = notification.NotificationPayload.Badge > 0 ? notification.NotificationPayload.Badge : 1;
+
             FirebaseMessaging client = GetMessagingClient(notification.Target.Application);
 
             Message message = new Message()
@@ -104,6 +115,14 @@ namespace PushNotifications.Delivery.FireBase
                 {
                     Title = notification.NotificationPayload.Title,
                     Body = notification.NotificationPayload.Body
+                },
+                Apns = new ApnsConfig()
+                {
+                    Aps = new Aps()
+                    {
+                        Sound = notification.NotificationPayload.Sound,
+                        Badge = badge,
+                    }
                 }
             };
 
