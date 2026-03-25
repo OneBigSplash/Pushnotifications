@@ -46,6 +46,8 @@ namespace PushNotifications.Api
 
             services.AddCronus(Configuration);
             services.AddCronusAspNetCore();
+
+            services.AddHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
