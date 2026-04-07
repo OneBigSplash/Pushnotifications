@@ -36,6 +36,7 @@ namespace PushNotifications.Api
             services.AddLogging();
 
             services.AddControllers();
+            services.AddHealthChecks();
             services.AddScoped<ApiContext>();
             services.AddHttpContextAccessor();
             services.AddCustomProblemDetails();
