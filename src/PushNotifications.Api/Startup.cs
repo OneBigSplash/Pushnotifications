@@ -71,6 +71,7 @@ namespace PushNotifications.Api
             app.UseCronusAspNetCore();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/uptime").AllowAnonymous().WithMetadata(new BypassTenantAttribute());
                 endpoints.MapControllers();
                 endpoints.MapDefaultControllerRoute();
             });
