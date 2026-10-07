@@ -1,5 +1,6 @@
 {
     "Serilog": {
+        "Using": [ "Elastic.Serilog.Sinks" ],
         "MinimumLevel": {
             // Verbose | Debug | Information | Warning | Error | Fatal
             "Default": "Information",
@@ -12,13 +13,12 @@
         },
         "WriteTo": [
             {
-                // https://github.com/serilog/serilog-sinks-elasticsearch#json-appsettingsjson-configuration
+                // https://www.elastic.co/docs/reference/ecs/logging/dotnet/serilog-data-shipper
                 "Name": "Elasticsearch",
                 "Args": {
-                    "nodeUris": "%log_server%",
-                    "autoRegisterTemplate": true,
-                    "autoRegisterTemplateVersion": "ESv6",
-                    "indexFormat": "prd-log-%log_name%-{0:yyyyMMdd}"
+                    "nodes": [ "%log_server%" ],
+                    "dataStream": "logs-elders.pushnotifications-production",
+                    "bootstrapMethod": "Silent"
                 }
             }
         ]

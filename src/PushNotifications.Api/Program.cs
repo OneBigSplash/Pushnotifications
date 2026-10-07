@@ -23,6 +23,7 @@ namespace PushNotifications.Api
                 .ConfigureAppConfiguration(cfg => cfg.Add(new PandoraConsulConfigurationSource(Environment.GetEnvironmentVariable("CONSUL_ADDRESS", EnvironmentVariableTarget.Process))))
                 .ConfigureAppConfiguration((context, configApp) =>
                 {
+        context.HostingEnvironment.EnvironmentName = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT", EnvironmentVariableTarget.Process);
                     configApp.AddEnvironmentVariables();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>

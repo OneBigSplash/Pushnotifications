@@ -11,21 +11,26 @@ namespace Logging
     {
         public static void Configure(HostBuilderContext context, LoggerConfiguration config)
         {
+            config
+                .MinimumLevel.Debug()
+                .ReadFrom.Configuration(BuildConfiguration(context.HostingEnvironment.EnvironmentName))
+                .Enrich.WithMachineName()
+                .Enrich.FromLogContext();
+        }
+
+        internal static IConfiguration BuildConfiguration(string environment)
+        {
             var builder = new ConfigurationBuilder();
 
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
                 builder.SetBasePath(Directory.GetCurrentDirectory());
 
             builder
-                .AddEnvironmentVariables()
                 .AddJsonFile($"serilog.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"serilog.{context.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+                .AddJsonFile($"serilog.{environment}.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
 
-            config
-                .MinimumLevel.Debug()
-                .ReadFrom.Configuration(builder.Build())
-                .Enrich.WithMachineName()
-                .Enrich.FromLogContext();
+            return builder.Build();
         }
     }
 
@@ -33,17 +38,20 @@ namespace Logging
     {
         public static void WithStartupDiagnostics(string applicationName, Action programExecution)
         {
-            var builder = new ConfigurationBuilder();
-            BuildConfiguration(builder);
+            Serilog.Debugging.SelfLog.Enable(Console.Error);
 
+            var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT", EnvironmentVariableTarget.Process);
             Serilog.Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Build())
+                .ReadFrom.Configuration(SerilogConfiguration.BuildConfiguration(environment))
+
+                .Enrich.WithMachineName()
                 .Enrich.FromLogContext()
-                .CreateLogger();
+                .CreateBootstrapLogger();
 
             try
             {
                 Serilog.Log.Information(new ServerInfo().ToString());
+
 
                 Serilog.Log.Information($"Starting {applicationName} host...");
 
@@ -53,33 +61,15 @@ namespace Logging
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message, ex);
                 Serilog.Log.Fatal(ex, $"{applicationName} host terminated unexpectedly!");
+                Environment.ExitCode = 1;
             }
             finally
             {
                 Serilog.Log.CloseAndFlush();
             }
         }
-
-        static void BuildConfiguration(ConfigurationBuilder builder)
-        {
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-            {
-                builder.SetBasePath(Directory.GetCurrentDirectory());
-            };
-
-            builder
-                .AddEnvironmentVariables()
-                .AddJsonFile("serilog.json", optional: false, reloadOnChange: true);
-
-            string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT", EnvironmentVariableTarget.Process);
-            if (string.IsNullOrEmpty(environment) == false)
-            {
-                builder.AddJsonFile($"serilog.{environment}.json", optional: true);
-            }
-        }
-
+    }
         public class ServerInfo
         {
             public ServerInfo()
@@ -109,5 +99,4 @@ namespace Logging
                 return buffer.ToString();
             }
         }
-    }
 }
