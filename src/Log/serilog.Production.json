@@ -1,5 +1,6 @@
 {
     "Serilog": {
+        "Using": [ "Serilog.Sinks.File" ],
         "MinimumLevel": {
             // Verbose | Debug | Information | Warning | Error | Fatal
             "Default": "Information",
@@ -12,14 +13,16 @@
         },
         "WriteTo": [
             {
-                // https://github.com/serilog/serilog-sinks-elasticsearch#json-appsettingsjson-configuration
-                "Name": "Elasticsearch",
+                "Name": "File",
                 "Args": {
-                    "nodeUris": "%log_server%",
-                    "autoRegisterTemplate": true,
-                    "autoRegisterTemplateVersion": "ESv6",
-                    "indexFormat": "prd-log-%log_name%-{0:yyyyMMdd}"
-                }
+                    "path": "logs/%log_name%-production-.log",
+                    "rollingInterval": "Day",
+                    "fileSizeLimitBytes": 104857600,
+                    "rollOnFileSizeLimit": true,
+                    "retainedFileCountLimit": 14,
+                    "buffered": false,
+                    "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{Application}] [{MachineName}] [{SourceContext}] {Message:lj} {Properties:j}{NewLine}{Exception}"
+                    }
             }
         ]
     }
