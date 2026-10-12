@@ -25,16 +25,6 @@
             //        "rollingInterval": "Day"
             //    }
             //},
-            //{
-            //    // https://github.com/serilog/serilog-sinks-elasticsearch#json-appsettingsjson-configuration
-            //    "Name": "Elasticsearch",
-            //    "Args": {
-            //        "nodeUris": "%log_server%",
-            //        "autoRegisterTemplate": true,
-            //        "autoRegisterTemplateVersion": "ESv7",
-            //        "indexFormat": "dev-log-%log_name%-{0:yyyy.MM.dd}"
-            //    }
-            //}
         ]
     }
 }
