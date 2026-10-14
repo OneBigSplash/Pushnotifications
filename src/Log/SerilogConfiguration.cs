@@ -60,7 +60,7 @@ namespace Logging
                     .Enrich.WithMachineName()
                     .Enrich.FromLogContext()
                     .WriteTo.Console()
-                    .CreateBootstrapLogger();
+                    .CreateLogger(); // not E.H's CreateBootstrapLogger: that binds ReloadableLogger, binary-incompatible with Serilog >=3 (TypeLoad on netcoreapp3.1/net6 hosts)
 
                 try
                 {
