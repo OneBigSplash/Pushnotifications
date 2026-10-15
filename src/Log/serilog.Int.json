@@ -1,46 +1,53 @@
 {
-  "Serilog": {
-    "MinimumLevel": {
-      "Default": "Information",
-      "Override": {
-        "One": "Information",
-        "Microsoft": "Information",
-        "Microsoft.Hosting.Lifetime": "Information",
-        "Microsoft.AspNetCore": "Warning",
-        "System": "Warning",
-        "Elders": "Information",
-        "PushNotifications.Ports": "Debug"
-      }
-    },
-    "WriteTo": {
-      "File": {
-        "Name": "Async",
-        "Args": {
-          "blockWhenFull": false,
-          "configure": [
-            {
-              "Name": "File",
-              "Args": {
-                "path": "/var/log/app/app-.json",
-                "formatter": {
-                  "type": "Elastic.CommonSchema.Serilog.EcsTextFormatter, Elastic.CommonSchema.Serilog"
-                },
-                "rollingInterval": "Day",
-                "rollOnFileSizeLimit": true,
-                "fileSizeLimitBytes": 52428800,
-                "retainedFileCountLimit": 5,
-                "buffered": true,
-                "flushToDiskInterval": "00:00:01"
-              }
+    "Serilog": {
+        "MinimumLevel": {
+            // Verbose | Debug | Information | Warning | Error | Fatal
+            "Default": "Information",
+            "Override": {
+                "Elders": "Information",
+                "Microsoft": "Information",
+                "Microsoft.AspNetCore": "Warning",
+                "System": "Information",
+                "PushNotifications.Ports": "Debug"
             }
-          ]
+        },
+        "Using": [
+            "Serilog.Sinks.Async",
+            "Serilog.Sinks.File",
+            "Serilog.Sinks.Console",
+            "Elastic.CommonSchema.Serilog"
+        ],
+        "WriteTo": {
+            "File": {
+                "Name": "Async",
+                "Args": {
+                    "blockWhenFull": false,
+                    "configure": [
+                        {
+                            "Name": "File",
+                            "Args": {
+                                "path": "/var/log/app/app-.json",
+                                "formatter": {
+                                    "type": "Elastic.CommonSchema.Serilog.EcsTextFormatter, Elastic.CommonSchema.Serilog"
+                                },
+                                "rollingInterval": "Day",
+                                "rollOnFileSizeLimit": true,
+                                "fileSizeLimitBytes": 52428800,
+                                "retainedFileCountLimit": 5,
+                                "buffered": true,
+                                "flushToDiskInterval": "00:00:01"
+                            }
+                        }
+                    ]
+                }
+            },
+            "Console": {
+                "Name": "Console",
+                "Args": {
+                    "theme": "Serilog.Sinks.SystemConsole.Themes.ConsoleTheme::None, Serilog.Sinks.Console",
+                    "restrictedToMinimumLevel": "Error"
+                }
+            }
         }
-      }
-    },
-    "Using": [
-      "Serilog.Sinks.Async",
-      "Serilog.Sinks.File",
-      "Elastic.CommonSchema.Serilog"
-    ]
-  }
+    }
 }

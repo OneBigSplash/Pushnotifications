@@ -1,25 +1,16 @@
 {
-  "Serilog": {
-    "MinimumLevel": {
-      "Default": "Debug",
-      "Override": {
-        "One": "Information",
-        "Microsoft": "Information",
-        "Microsoft.AspNetCore": "Warning",
-        "System": "Information",
-        "Elders": "Information"
-      }
-    },
-    "WriteTo": [
-      {
-        "Name": "Debug"
-      },
-      {
-        "Name": "Console",
-        "Args": {
-          "theme": "Log.EldersThemes::Epic, Log"
-        }
-      }
-    ]
-  }
+    "Serilog": {
+        "MinimumLevel": {
+            // Verbose | Debug | Information | Warning | Error | Fatal
+            "Default": Debug",
+            "Override": {
+                "Elders": "Information",
+                "Microsoft.AspNetCore": "Warning",
+                "System": "Information"
+            }
+        },
+        "WriteTo": [
+            // PITFALL. Jump
+        ]
+    }
 }
