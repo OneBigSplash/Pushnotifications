@@ -10,22 +10,17 @@
                 "System": "Information"
             }
         },
-        "Using": [
-            "Serilog.Sinks.Async",
-            "Serilog.Sinks.File",
-            "Serilog.Sinks.Console",
-            "Elastic.CommonSchema.Serilog"
-        ],
         "WriteTo": {
             "File": {
                 "Name": "Async",
                 "Args": {
+                    "bufferSize": 20000,
                     "blockWhenFull": false,
                     "configure": [
                         {
                             "Name": "File",
                             "Args": {
-                                "path": "/var/log/app/app-.json",
+                                "path": "/var/log/app/%log_name%-.json",
                                 "formatter": {
                                     "type": "Elastic.CommonSchema.Serilog.EcsTextFormatter, Elastic.CommonSchema.Serilog"
                                 },
@@ -38,13 +33,6 @@
                             }
                         }
                     ]
-                }
-            },
-            "Console": {
-                "Name": "Console",
-                "Args": {
-                    "theme": "Serilog.Sinks.SystemConsole.Themes.ConsoleTheme::None, Serilog.Sinks.Console",
-                    "restrictedToMinimumLevel": "Error"
                 }
             }
         }
