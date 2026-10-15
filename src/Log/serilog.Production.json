@@ -20,6 +20,7 @@
             "File": {
                 "Name": "Async",
                 "Args": {
+                    "bufferSize": 20000,
                     "blockWhenFull": false,
                     "configure": [
                         {
@@ -40,13 +41,7 @@
                     ]
                 }
             },
-            "Console": {
-                "Name": "Console",
-                "Args": {
-                    "theme": "Serilog.Sinks.SystemConsole.Themes.ConsoleTheme::None, Serilog.Sinks.Console",
-                    "restrictedToMinimumLevel": "Error"
-                }
-            }
+            
         }
     }
 }

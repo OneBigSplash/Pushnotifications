@@ -15,7 +15,6 @@ namespace Logging
             public static void Configure(HostBuilderContext context, LoggerConfiguration config)
             {
                 config
-                    .MinimumLevel.Debug()
                     .ReadFrom.Configuration(BuildConfiguration(context.HostingEnvironment.EnvironmentName))
                     .Enrich.WithProperty(ApplicationNamePropertyName, context.HostingEnvironment.ApplicationName)
                     .Enrich.WithMachineName()
@@ -55,12 +54,16 @@ namespace Logging
                 // The bootstrap logger only writes to the console. It must not open the log file:
                 // the real logger (SerilogConfiguration.Configure) opens the same rolling file, and two
                 // writers on one file collide (the second one rolls to app-<date>_001.json).
+
+                var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+
                 Serilog.Log.Logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(SerilogConfiguration.BuildConfiguration(environment))
                     .Enrich.WithProperty(ApplicationNamePropertyName, applicationName)
                     .Enrich.WithMachineName()
                     .Enrich.FromLogContext()
                     .WriteTo.Console()
-                    .CreateLogger(); // not E.H's CreateBootstrapLogger: that binds ReloadableLogger, binary-incompatible with Serilog >=3 (TypeLoad on netcoreapp3.1/net6 hosts)
+                    .CreateBootstrapLogger();
 
                 try
                 {
